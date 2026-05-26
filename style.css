@@ -1,0 +1,105 @@
+
+body {
+  margin: 0;
+  background: #f4f7fb;
+  font-family: Arial, sans-serif;
+  color: #222;
+}
+
+header {
+  background: #2456ff;
+  color: white;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+main {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+h2 {
+  margin-top: 0;
+}
+
+textarea {
+  width: 100%;
+  height: 180px;
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  font-size: 15px;
+}
+
+input[type="file"] {
+  margin-top: 10px;
+}
+
+button {
+  background: #2456ff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 18px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+#results {
+  margin-top: 18px;
+  padding: 16px;
+  background: #eef3ff;
+  border-radius: 10px;
+  white-space: pre-wrap;
+}
+
+#chatBox {
+  height: 260px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 12px;
+  background: #fafafa;
+  margin-bottom: 12px;
+}
+
+.message {
+  margin-bottom: 12px;
+}
+
+.student {
+  color: #2456ff;
+  font-weight: bold;
+}
+
+.teacher {
+  color: #00804d;
+  font-weight: bold;
+}
+
+.chatControls {
+  display: flex;
+  gap: 10px;
+}
+
+.chatControls input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
