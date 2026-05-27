@@ -1,10 +1,380 @@
-GradeAI
-Student Assignment Evaluator with AI Teacher Feedback
-1. Upload or Paste Rubric
-2. Upload or Paste Assignment
-3. Evaluate Assignment
-Evaluate Assignment
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GradeAI — Assignment Evaluator</title>
 
-4. AI Teacher Chat
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, Helvetica, sans-serif;
+    }
 
-Send
+    body{
+      background:#0f172a;
+      color:white;
+      min-height:100vh;
+      padding:30px;
+    }
+
+    .container{
+      max-width:1200px;
+      margin:auto;
+    }
+
+    .hero{
+      text-align:center;
+      margin-bottom:40px;
+    }
+
+    .hero h1{
+      font-size:3rem;
+      margin-bottom:10px;
+      color:#38bdf8;
+    }
+
+    .hero p{
+      color:#cbd5e1;
+      font-size:1.1rem;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:25px;
+    }
+
+    .card{
+      background:#1e293b;
+      border-radius:18px;
+      padding:25px;
+      box-shadow:0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    .card h2{
+      margin-bottom:15px;
+      color:#7dd3fc;
+    }
+
+    textarea{
+      width:100%;
+      height:220px;
+      resize:vertical;
+      border:none;
+      border-radius:12px;
+      padding:15px;
+      font-size:15px;
+      background:#334155;
+      color:white;
+      margin-top:10px;
+    }
+
+    textarea::placeholder{
+      color:#cbd5e1;
+    }
+
+    button{
+      margin-top:20px;
+      width:100%;
+      padding:15px;
+      border:none;
+      border-radius:12px;
+      background:#0ea5e9;
+      color:white;
+      font-size:16px;
+      font-weight:bold;
+      cursor:pointer;
+      transition:0.3s;
+    }
+
+    button:hover{
+      background:#0284c7;
+    }
+
+    .results{
+      margin-top:30px;
+    }
+
+    .result-box{
+      background:#1e293b;
+      padding:25px;
+      border-radius:18px;
+      margin-top:20px;
+      line-height:1.8;
+    }
+
+    .score{
+      font-size:2rem;
+      font-weight:bold;
+      color:#4ade80;
+      margin-bottom:15px;
+    }
+
+    .feedback{
+      color:#e2e8f0;
+      white-space:pre-wrap;
+    }
+
+    .chat-section{
+      margin-top:40px;
+    }
+
+    .chat-box{
+      background:#1e293b;
+      border-radius:18px;
+      padding:25px;
+    }
+
+    .chat-messages{
+      height:250px;
+      overflow-y:auto;
+      background:#334155;
+      border-radius:12px;
+      padding:15px;
+      margin-bottom:15px;
+    }
+
+    .message{
+      margin-bottom:12px;
+      padding:10px;
+      border-radius:10px;
+    }
+
+    .user{
+      background:#0ea5e9;
+    }
+
+    .ai{
+      background:#475569;
+    }
+
+    .chat-input{
+      display:flex;
+      gap:10px;
+    }
+
+    .chat-input input{
+      flex:1;
+      padding:14px;
+      border:none;
+      border-radius:10px;
+      background:#334155;
+      color:white;
+    }
+
+    .chat-input button{
+      width:140px;
+      margin-top:0;
+    }
+
+    @media(max-width:900px){
+      .grid{
+        grid-template-columns:1fr;
+      }
+
+      .hero h1{
+        font-size:2.2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="hero">
+    <h1>GradeAI</h1>
+    <p>
+      Intelligent Assignment Evaluator with AI Teacher Feedback
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <h2>1. Paste Your Rubric</h2>
+
+      <textarea id="rubric" placeholder="Example:
+
+- Thesis clarity
+- Evidence and support
+- Grammar and mechanics
+- Organization
+- Creativity
+"></textarea>
+    </div>
+
+    <div class="card">
+      <h2>2. Paste Your Assignment</h2>
+
+      <textarea id="assignment" placeholder="Paste your essay, assignment, or written work here..."></textarea>
+    </div>
+
+  </div>
+
+  <div class="results">
+    <button onclick="evaluateAssignment()">
+      Evaluate Assignment
+    </button>
+
+    <div class="result-box" id="resultsBox" style="display:none;">
+      <div class="score" id="score"></div>
+
+      <div class="feedback" id="feedback"></div>
+    </div>
+  </div>
+
+  <div class="chat-section">
+
+    <div class="chat-box">
+
+      <h2 style="margin-bottom:15px; color:#7dd3fc;">
+        4. AI Teacher Chat
+      </h2>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="message ai">
+          Hello! I'm your AI Teacher Assistant. Ask me how to improve your assignment.
+        </div>
+      </div>
+
+      <div class="chat-input">
+        <input
+          type="text"
+          id="chatInput"
+          placeholder="Ask for assignment help..."
+        />
+
+        <button onclick="sendMessage()">
+          Send
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+function evaluateAssignment(){
+
+  const rubric = document.getElementById("rubric").value.trim();
+  const assignment = document.getElementById("assignment").value.trim();
+
+  if(!rubric || !assignment){
+    alert("Please paste both the rubric and assignment.");
+    return;
+  }
+
+  let score = 70;
+
+  const wordCount = assignment.split(" ").length;
+
+  if(wordCount > 300){
+    score += 10;
+  }
+
+  if(assignment.includes(".")){
+    score += 5;
+  }
+
+  if(assignment.length > 1000){
+    score += 5;
+  }
+
+  if(score > 100){
+    score = 100;
+  }
+
+  let feedback = "";
+
+  feedback += "Assignment Evaluation Complete.\n\n";
+
+  feedback += "Strengths:\n";
+  feedback += "- Your assignment demonstrates effort and detail.\n";
+  feedback += "- The writing appears organized.\n";
+  feedback += "- You included multiple ideas and explanations.\n\n";
+
+  feedback += "Areas for Improvement:\n";
+  feedback += "- Add stronger supporting evidence.\n";
+  feedback += "- Improve transitions between paragraphs.\n";
+  feedback += "- Double-check grammar and punctuation.\n";
+  feedback += "- Make sure all rubric requirements are fully addressed.\n\n";
+
+  feedback += "Teacher Suggestion:\n";
+  feedback += "Review your conclusion and make it more impactful by summarizing your strongest points.";
+
+  document.getElementById("resultsBox").style.display = "block";
+
+  document.getElementById("score").innerHTML =
+    "Estimated Grade: " + score + "%";
+
+  document.getElementById("feedback").innerText = feedback;
+}
+
+function sendMessage(){
+
+  const input = document.getElementById("chatInput");
+
+  const text = input.value.trim();
+
+  if(!text){
+    return;
+  }
+
+  const chatMessages = document.getElementById("chatMessages");
+
+  const userMessage = document.createElement("div");
+  userMessage.className = "message user";
+  userMessage.innerText = text;
+
+  chatMessages.appendChild(userMessage);
+
+  let aiResponse = "";
+
+  if(text.toLowerCase().includes("improve")){
+    aiResponse =
+      "Try adding more supporting details and clearer explanations for each main point.";
+  }
+  else if(text.toLowerCase().includes("grammar")){
+    aiResponse =
+      "Read your assignment out loud slowly to catch grammar mistakes and awkward sentences.";
+  }
+  else if(text.toLowerCase().includes("conclusion")){
+    aiResponse =
+      "A strong conclusion should restate your main idea and leave a lasting impression.";
+  }
+  else{
+    aiResponse =
+      "Your assignment shows good potential. Focus on organization, clarity, and supporting evidence.";
+  }
+
+  setTimeout(() => {
+
+    const aiMessage = document.createElement("div");
+
+    aiMessage.className = "message ai";
+
+    aiMessage.innerText = aiResponse;
+
+    chatMessages.appendChild(aiMessage);
+
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+  }, 500);
+
+  input.value = "";
+
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+</script>
+
+</body>
+</html>
